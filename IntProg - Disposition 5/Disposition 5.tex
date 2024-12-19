@@ -1,0 +1,193 @@
+\documentclass[a4paper,12pt]{article}
+
+% Packages
+\usepackage{amsmath} % For math typesetting
+\usepackage{amssymb} % For additional math symbols
+\usepackage{geometry} % To adjust the page margins
+\usepackage{graphicx} % To allow insert of pictures
+\usepackage{float}    % Allows use of [H]
+\usepackage{multicol}
+
+
+
+% Bib 
+\usepackage{biblatex} % Imports biblatex package
+\addbibresource{ref.bib} % Import the bibliography file
+
+% Custom commands
+\newcommand{\myblock}[1]{#1}
+\newcommand{\textbfit}[1]{\textbf{\textit{#1}}}
+
+% Page margins
+\geometry{margin=1in}
+
+
+% Document title and author information
+\title{Introduction Til Programmering \\
+        Disposition 5 \\
+        Inheritance and Dynamic Method Lookup}
+\author{Joakim Iversen}
+\date{12-11-2024}
+
+\begin{document}
+
+% Generate the title
+    \maketitle
+\newpage
+
+\section*{Disposition:}
+\begin{itemize}
+    \item Motivation
+    \item Inheritance
+    \item subtypes, substitution og polymorfisk variabler
+    \item DML (Dynamic Method Lookup)
+\end{itemize}
+
+\newpage
+\begin{center}
+    \textbfit{Kode eksempel: NewsFeed}\\
+    
+    \textbfit{DU BEHØVER IKKE SKRIVE ALLE FELT VARIABLER OG METODER IND I UML-DIAGRAM}
+\end{center}
+
+\section*{Notes:}
+\subsection*{Motivation:}
+
+\begin{itemize}
+    \item Undgå kode duplikering
+    \item Gør koden letter at rette
+    \item Tilføje features uden at modifisere subklassen
+\end{itemize}
+
+\subsection*{Kapitel 10 - Improving Structure with Inheritance:}
+\subsubsection*{Main concepts:}
+\begin{itemize}
+    \item Inheritance
+    \item Substitution
+    \item Subtyping
+    \item Polymorphic Variables
+\end{itemize}
+
+\subsubsection*{Notes:}
+\textit{Kode eksempel:}
+Vil gøre brug af projektet \textbf{Network}.
+
+Projektet har tre klasser:
+\begin{enumerate}
+    \item NewsFeed
+    \item MessagePost
+    \item PhotoPost
+\end{enumerate}
+
+Newsfeed indeholder en arrayliste til at holde på MessagePost og PhotoPost.
+Både MessagePost og PhotoPostindeholder nogle metoder der gør det samme - 
+det kan derfor være i vores interresse at få lavet en "fælles" metode til nogle
+af disse.
+
+\begin{center}
+    \textit{TEGN KLASSE DIAGRAM UDEN INHERITANCE + KODE EKSEMPEL} \\
+    Dårligt eksempel med MessagePost og PhotoPost - Mange ens metoder.
+\end{center}
+
+\textbf{\textit{Inheritance:}} \\
+
+Til at løse dette vil vi kunne gøre brug af nedarvning - Inheritance. Nedarvning tillader os at lave en klasse der kan "nedarve" dens metoder og felt variabler. Klassen der bliver nedarvet fra vil jeg kalde "fader-klassen", formelt kaldes den for "super-klassen" og klasser der nedarve ting fra den kaldes for "sub-klasser". 
+
+Måden man deklarer en sub- og super-klasse er ved at bruge det reserverede ord 'extends'.
+
+
+\noindent\textit{Brug af nedarvning} \\
+\begin{center}
+    \textit{MODIFICER KODE EKSEMPEL OG KLASSE DIAGRAM TIL BRUG AF NEDARVNINING}
+    Tilføj "extends", lav en post super-klasse 
+\end{center}
+something
+\textbf{!HUSK!}
+\begin{itemize}
+    \item KALD SUPER KLASSSEN MED \begin{verbatim}super(parametre)\end{verbatim}
+    \item Flyt fælles feltvariabler og metoder
+\end{itemize}
+
+\textbf{\textit{Subtyping / Substitution:}} \\
+Subtyping handler, skåret ind til benet, om hvilke typer der hænger sammen. Det kan samenlignes med når vi laver sub- og super-klasser.
+
+Når vi bruger nedarvning vil vi nemlig kunne sige at vores subklasser også bliver en "sub type" af vores superklasse. Forstået på den måde, at alle steder vi vil skulle oplyse en type lig vores superklasse, vil vi kunne opgive en subtype (subklasse).
+
+\textit{Lille subtype eksempel} \\
+Vi kan også tage et ekssempel med musik. Her genre en type og 80'er pop er klart den bedste subtype. 
+
+Overført til vores eksempel på tavlen kan vi sige at vores post er en type, og MessagePost og PhotoPost er subtyper af post. Dette vil sige at vi kan lave substitution, hvor vi sætter en variable defineret med typen Post lig med MessagePost eller PhotoPost.
+
+\begin{center}
+    \textit{LAV EKSEMPEL PÅ SUBSTITUTION MED POST OG MSGPOST}
+\end{center}
+
+Vi kan egentlig sige at alle selvlavet klasser er sub-klasser og subtyper af hoved klassen "Objekt". Java laver automatisk denne klasse til en suertype til ens klasser, så det er ikke noget man selv skal tænke på.
+Det er også fra denne klasse vi har metoderne \textit{toString(), hashCode(),} og \textit{equals()}
+
+\subsection*{Kapitel 11 - More about Inheritance:}
+\subsubsection*{Main concepts:}
+\begin{itemize}
+    \item Method polymorphism
+    \item Static and dynamic type
+    \item Overriding
+    \item Dynamic method Lookup
+\end{itemize}
+
+\subsubsection*{Notes:}
+Vores kode eksempel fra sidst i kap 10 vil printe forkert. Vi vil ikke kunne se MessagePost message tekst eller PhotoPost image filename ikke er tilgængeligt i vores post klasse.
+
+Dette skyldes at en inherince kun er en envejs kommunikation. Det er altså kun muligt for klasserne der nedarver at tilgå faderklassen, men ikke faderklassen at tilgå børnene. \\
+
+
+\textbfit{Statisk- og dynamisk type:} \\
+Vores første løsning på dette problem er måske at flytte vores display metode tilbage til MessagePost og PhotoPost. Dette giver dog nogle fejl sm gør vi ikke kan compilie:
+\begin{itemize}
+    \item MessagePost og PhotoPost kan ikke tilgå superklassens feltvariabler
+    \item NewsFeed kan ikke finde display metoden mere.
+\end{itemize}
+
+Når vi snakker om dynamsike og statiske typer refferere vi til når en variable af en type egenligt er noget andet.
+\begin{verbatim}
+    Post p1 = new MsgPost();
+\end{verbatim}
+Er $p1$ her af typen Post eller MessagePost? Vi siger at den dynamiske type af $p1$ er en MessagePost og den statiske type er Post. Dette er da vi kan ændre hvad den peger på, men selve definationen af $p1$ kan ikke ændres og det er af typen Post.
+
+Derfor får vi en fejl ved at flytte metoderne ned i MessagePost og PhotoPost, da compilieren kigger på de statiske typer, og ved at rykke metoderne er der ikke længere en dispaly metode i post klassen.
+
+Derfor bliver vi nød til også at have en display metode i vores post klasse. \\
+
+
+\textbfit{Overriding:}\\
+Hvis vi antager at display metoden nu er i alle tre klasser (Post, MessagePost, PhotoPost). Nu vil vi kunne kompilerer vores kode da Newsfeed nu kan finde display metoden i Post klassen.
+
+Hvis vi så vil have MessagePost og PhotoPost til at printe noget forskelligt, kan vi Override dispaly metoden fra Post. Dette gør vi ved bare at lave en metode der hedder præcis det samme - her er det også god praktis at tilføje '@Override' over metoden for at sige hvad man gør.
+
+Hvis vi vil have den til først at printe superklassens metode kan vi kalde den på følgende måde for PhotoPost:
+\begin{verbatim}
+public void disply(){
+    super.display();
+    System.out.println("  [" + filename + "]");
+    System.out.println(" " + caption);
+}
+\end{verbatim}  
+
+Dette vil først kalde metoden fra superklassen derefter kører metoden fra subklassen. \\
+
+\textbfit{Dynamic Method Lookup:} \\
+Vi ændre hele måden vi tjekker efter en metode. En variables statiske typer har ikke noget at sige mere. Det første den kigger efter under gennemkørsel er den dynamiske type. Denne vil tage precedens over superklassens metoder. 
+
+Derfor vil den, hvis der er en, kalde dispaly metoden fra subklassen. Hvis der ikke er en der, vil den så søge opad indtil den finder en.
+
+Det er det samme der sker med toString metoden fra objekt klassen. Hvis vi ikke overrider den i løbet af vores kode vil den gå til dens standard metode som skrevet i objekt klassen. Hvis den derimod er blevet overridet, vil den tage den overridet metode.
+
+\textbfit{Method polymorphism:}
+Vi vil her også kunne sige display metoden er polymorfisk ligesom Post typen, da den ændre sig alt efter hvilken subtype den kommer fra.
+
+Der er altså forskel på følgende to metode kald:
+\begin{verbatim}
+    MsgPost.display();
+    PhotoPost.display();
+\end{verbatim}
+
+\end{document}

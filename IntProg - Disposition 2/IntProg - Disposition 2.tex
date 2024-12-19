@@ -1,0 +1,148 @@
+\documentclass{article}
+\usepackage[margin=1in]{geometry}
+
+\title{Introduktion Til Programmering
+        Disposition 2 \\
+        Functional Processing of Collections (Streams and Lambdas) \\
+        Kapitel 5}
+\author{Joakim Iversen}
+\date{\today}
+
+\begin{document}
+    \maketitle
+\newpage
+
+\section*{Disposition:}
+\begin{enumerate}
+    \item Motivation
+    \item Streams
+    \item Lambdas
+\end{enumerate}
+\newpage
+
+\section*{Noter:}
+\begin{center}
+    \textit{KODEEKSEMPEL: ANIMAL POPULATION}
+\end{center}
+
+\subsection*{Motivation}
+Der er de seneste par år blevet 
+
+\subsection*{Kapitel 5}
+
+\textbf{Main Concepts}
+\hrule \vspace{0.3em}
+\begin{itemize}
+    \item Funktional Programmering
+    \item lambdas
+    \item Streams
+    \item Pipelines
+\end{itemize}
+\hrule \vspace{0.3em}
+
+Hvor vi førhen brugte vores \textbf{for-each} og \textbf{While} løkke til at gennemløbe vores collections, er vi blevet introduceret til en "pænere" måde at gøre dette på ved brug af streams og lambdaer.
+
+\subsubsection*{Lambdaer}
+Hoved ideen bag lambdaer er, hvor vi til en metode i stedet for at give den parametre nu kan give den en \textit{Kode stump}. Så hvor vi før kun har set parametre som forskellige data typer, \textit{int, strings, objekter}, kan vi nu bruge kode. 
+\begin{center}
+    \textit{\textbf{DETTE ER EN NY TILFØJELSE TIL JAVA, DER KOM I JAVA 8}}
+\end{center} 
+
+Vores basis syntax for at gennemløbe en collection med lambdaer er lidt anderledes end da vi brugte løkker:
+\begin{verbatim}
+collection.doThisForEachElement(some code);
+\end{verbatim}
+
+Dette er meget mere simpelt end at skulle lave en stor løkke med en conditions der skal mødes og så hvad der skal ske. Dette er nu skrevet in i vores \textit{doThisForEachElement}. Vi kan sammenligne de to metoder med at skulle klippe en hel klasse. I den gamle metode - med løkker - beder vi læreren om at give os det første barn, hvilket vi så give en hårklipning. Derefter beder vi læreren om at sende os et nyt barn.
+
+Når vi burger lambdaer skriver vi instrukserne ned for hvordan man klipper hår, giver det til læreren og beder dem om at klippe alle børnene. Vi er i bund og grund også ligeglad med hvordan læreren får det gjort, om de selv gør det eller giver opgaven videre til flere andre så flere børn kan blive klippet på samme tid.
+
+På denne måde er vores liv blevet meget nemmere, da læreren gør det meste af arbejdet for os.
+
+Der er nogle ting vi skal notere os omkring lambdaer der gør dem unike fra en normal funciton:
+\begin{itemize}
+    \item Der er ikke noget public eller private keyword. (public af natur)
+    \item Ingen returtype - Det kan compileren regne ud fra det endelige statement
+    \item Der er ikke noget navn til en la,bda: starter med parameter listen
+    \item en pil (-\textgreater) deler paramter listen fra kroppen.
+\end{itemize}
+
+\vspace{0.3em}\hrule\vspace{0.3em}
+\textbf{Basisk Lambda Syntax}
+\begin{verbatim}
+(Sighting record) -> 
+{
+    System.out.println(record.getDetails());
+}
+\end{verbatim}
+\vspace{0.3em}\hrule
+
+Lambdaer blive ofte brugt til små oneoff opgaver der ikke kræver kompleksiteten af en hel klasse.
+
+Vi vil nu kigge på en mulighed for hvad vi kan indsætte ind i \textit{doThisForEachElement} metoden vi nævnte. Det er nemlig at lave en for-each løkke med en lambda. Syntaxen for dette vil se sådan her ud:
+
+\vspace{0.3em}\hrule\vspace{0.3em}
+\textbf{For Each Løkke - Lambda Syntax}
+\begin{verbatim}
+sightings.forEach(
+    (Sighting record) -> 
+    {
+        System.out.println(record.getDetails());
+    }
+);
+\end{verbatim}
+\vspace{0.3em}\hrule
+
+Der er altså en \textit{forEach} metode til lambdaer der gennemløber alle vores sightings og så gør det følgende ved dem. Her er det vigtigt at parameteren til \textit{forEach} metoden skal være en lambda.
+
+Selvom dette måske ikke umildbart ser "pænere" ud end en normal lykke er der nogle ting vi kan gøre, for at simplificere det endnu mere.
+\begin{itemize}
+    \item Parameter typen (Denne er altid den samme som collection element)
+    \item Hvis parameterlisten kun indeholder en parameter kan vi undlade '()'
+    \item Hvis kroppen kun har en statement kan vi droppe '{}'
+\end{itemize}
+
+Vi vil altså kunne lave vores kode fra før om til
+
+\vspace{0.3em}\hrule\vspace{0.3em}
+\textbf{For Each Løkke - Lambda Syntax - Simplificeret}
+\begin{verbatim}
+sightings.forEach(record -> System.out.println(record.getDetails()));
+\end{verbatim}
+\vspace{0.3em}\hrule
+
+Og det er denne kode vi skal gå efter i vores kode.
+
+\subsubsection*{Streams}
+\textit{forEach} metoden vi lige har kigget på til ArrayList er et eksempel på en måde at gøre brug af streams. Streams minder meget om collections med med nogle meget vigtige forskelle:
+\begin{itemize}
+    \item Stream elementer er ikke tilgået ved index, men normalt sekventialt
+    \item Indhold og ordenen i streams kan ikke ændres - ændringer kræver at man laver en ny stream
+    \item en stream kan muligvis blive uendelig
+\end{itemize}
+
+
+Streams er brugt til at ensgøre prosseser af forskellige dataset. Dette kunne være fra en collection, modtagene beskeder over et netværk, linjer af tekst fra en text fil, eller alle karaktere fra en String.
+
+Streams tilføjer en anden stor mulighed til os hvilket er muligheden for sikker paralel processing. Dette kan være meget nyttigt når rækkefølgen hvor i elementer bliver behandlet er lige gyldig, eller prosesen med data afhænger drastigt af andre elementer.
+
+\textbf{Filters, maps, reductions} \\
+Ved brug af disse tre funktioner kan vi modifisere vores stream til næsten alle behov vi kunne have. 
+
+\textbf{Filters:}
+Filter funktionen tager en stream og filtrerer nogle af elementerne fra og returnere en ny stream uden disse elementer.
+
+
+\textbf{Maps:}
+Map funktionen tager en stream og \textit{"mapper"} elementerne fra den gamle stream til nye elementer i den nye stream. Den nye stream vil have det samme antal elementer, men typen og konteksten af hvert element kan være anderledes.
+
+\textbf{Reductions:}
+Reduce funktionen tager alle elementer i en stream of reducere dem ned til et enkelt element. Dette kan være på forskellige præmiser. Det kan være ved at samle alle objekter sammen til et, vælge det mindste element eller noget helt andet.
+Så her starter vi altså med en helt stream, og ender op med et enkelt resultat.
+
+\textbf{Pipelines:}
+Den fulde kraft af streams og streams funktioner bliver tilgægelige når man sætter flere sammen. Dettte kaldes også pipeline. Hvis vi fx ville finde hvor mange elefant sightings vi har, kan vi bruge et filter, map og reduce efter hinanden.
+
+Først filtrere vi efter elefanter, dernæst mapper vi til antallet af elefanter vi har set og til sidst reducere vi ned til det samlede antal elefanter det er blevet set.
+
+\end{document}
