@@ -1,7 +1,8 @@
 \documentclass{article}
 \usepackage[margin=1in]{geometry}
 
-\title{Graphical User Interfaces (Components, Layout and Event Handling)}
+\title{Graphical User Interfaces (Components, Layout and Event Handling) \\
+        Kapitel 13}
 \author{Joakim Iversen}
 \date{\today}
 
@@ -11,7 +12,172 @@
 
 \textbf{\Large Disposition:}
 \begin{enumerate}
-    \item 
+    \item Motivation
+    \item Components
+    \item Layout
+    \item Event Handling
+\end{enumerate}
+\newpage
+
+\section*{Noter}
+\subsection*{Main Concepts}
+\begin{itemize}
+    \item Constructiong GUIs
+    \item interface Components
+    \item GUI Leyout
+    \item Event handling
+\end{itemize}
+
+\subsection*{Motivation}
+
+\subsection*{Tre hovedting at skulle vide}
+\begin{enumerate}
+    \item Hvilke elementer kan vi vise - Components
+    \item Hvordan arrangere vi disse elementer - Layout
+    \item Hvordan reagere vi på bruger input - Event Handling
 \end{enumerate}
 
+\subsection*{Biblioteker til GUI}
+Der er tre biblioteker i Java til GUI. AWT - \textit{Abstract Window Toolkit} - Der er den ældste. Swing, der bygger oven på AWT. Og den nyeste JavaFX.
+\begin{center}
+    \textbf{Tegn "Kasserne" med hvordan de forskellige klasser ser ud}
+\end{center}
+Jeg vil have fokus på Swing og være det jeg bruger i mine eksempler.
+
+Som eksempel til at vise de forskellige ting jeg snakker om, vil jeg tage udgangspunkt i BlueJ's ImageViewer projekt, der er et program til at åbne billedfiler, lave noget billede tranformation og gemme billedet igen.
+
+\subsection*{Lave en frame}
+Det første vi skal bruge er et \textit{Top level Window}
+Når vi skal bruge vores GUI biblioteker til vi først importere dem til vores klasse. Derefter kan vi lave en simpelt klasse til at indeholde vores frame vi vil tilføje alle vores components til.
+
+\begin{verbatim}
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+
+public class ImageViewer{
+    private JFrame frame;
+
+    public ImageViewer() {
+        makeFrame();
+    }
+
+    private void makeFrame() {
+        frame = new JFrame("ImageViewer");
+        Contaioner contentPane = frame.getContentPane();
+
+        JLabel label = new JLabel("I am a label. I can display some text.");
+        contentPane.add(label);
+
+        frame.pack();
+        frame.setVisible(true);
+    }
+}
+\end{verbatim}
+\begin{center}
+    \textbf{TEGN OUTPUTTET AF DETTE OG FORKLAR HVORDAN DE FORSKELLIGE TING HÆNGER SAMMEN}    
+\end{center}
+
+De sidste to linjer "pakker" først vores frame og arrangere tingene ordentligt. Det er altså noget vi altid skal kalde når vi har tilføjet eller ændret nogle af vores components.
+
+Den sidste linje gør hele vores frame synlig.
+
+\subsection*{Copmonents}
+Der er også mange andre components vi vil kunne tilføje til vores frame. For at nævne nogle af dem er der:
+\begin{itemize}
+    \item Knapper
+    \item Billede panel
+    \item Menubar
+\end{itemize}
+I kan spørge ind til disse hvis i ønsker noget uddybelse.
+
+\subsection*{Layout}
+Når vi så har tilføjet nogle ting opdager vi måske ret hurtigt at det ikke ser ud visuelt som vi regnede med, eller gerne vil have det til. For at fikse dette kan vi gøre brug af de forskellige layout metoder der er.
+
+Swing gør brug af \textit{layout managers} til at arrangere components i GUI'en. Hver container der indeholder elementer har en tilhørende layout manager, som så står for at arrangere de indeholdte components.
+
+Swing giver adgang til mange forskellige layout managers men de vigtigste er 
+\begin{itemize}
+    \item FlowLayout
+    \item BorderLayout
+    \item GridLayout
+    \item BoxLayout
+\end{itemize}
+
+Hoved forskellen mellem disse er måden hvorpå de placere forskellige elementer, og bearbejder den tilgængelige plads mellem elementerne.
+
+\subsubsection*{FlowLayout}
+\begin{verbatim}
+panel.setLaytout(new FlowLayout);
+\end{verbatim}
+Arrangere det fra venstre til højre. Centreret horisontalt og give med den prefferet størrelse.
+Hvis der ikke er pldas på den igangværende linje, vil den lave linje skift.
+
+Da elemetnerne ikke er sat til at fylde skærmen ud, vil der opstå ekstra plads hvis man resizer vinduet.
+
+\subsubsection*{BorderLayout}
+\begin{verbatim}
+panel.setLayout(new BorderLayout);
+\end{verbatim}
+Tillader at gemme elementer i 5 forskellige placeringer
+\begin{itemize}
+    \item Top - North
+    \item Bund - South
+    \item Venstre - West
+    \item Højre - East
+    \item Midten - Center
+\end{itemize}    
+Ved at bruge disse ord kan du placere elementer i de tilsvarende placeringer.
+
+Når man resizer et BorderLayout vindue er det midten der ændre sig mest. Højre og Venstre sidder bliver ændret i højden og top, bund i bredden.
+
+\subsubsection*{GridLayout}
+\begin{verbatim}
+panel.setLayout(new GridLayout(3,2));
+\end{verbatim}
+Du får et "grid" men det givne antal rækker og søjler. Hvor man så fylder op fra venstre til højre.
+
+\subsubsection*{BoxLayout}
+\begin{verbatim}
+panel.setLayout(new BoxLayout);
+\end{verbatim}
+
+\subsection*{Event Handling}
+Tre måder at håndetere dette på. Når man trykker på knappen bliver der rejst et \textbf{AcitonEvent}, dette vil man kunne lytte på hvis man implementere interfacet \textbf{ActionListener}.
+
+Den har en metode som skal implementeres, hvilket er
+\begin{verbatim}
+public void actionPerformed(ActionEvent e) {
+    if(e.getActionComment().equals("Open")) {
+        open();
+    }
+    else if(... quit) {
+        quit();
+    }
+}
+\end{verbatim}
+
+For at vores open metode ved at der skal lyttes efter et tryk, skal vi huske at tilføje
+\begin{verbatim}
+open.addActionListener(this);
+\end{verbatim}
+
+Dette er en grim måde at gøre det på, da vi kan have vildt mange items der går hen til den samme metode, hvor metoden så skal finde ud af hvor kaldet kom fra og så handle derefter. \\
+
+Da der kune er en metode i interfacet, vil vi nemt kunne implementere det via en lambda. Vi vil derfor i stedet kunne skrive følgende:
+\begin{verbatim}
+open.addActionListener(e -> open()); 
+\end{verbatim}
+Grunden til vi ikke behøver skrive \textit{ActionEvent} i vores lambda er at compileren selv kan regne det ud.
+
+Dette er meget pænere. men det kan ske at et listener interface ikke er funktionelt og har flere metoder, og så ville dette ikke være en mulig løsning. Der vil kunne gøre følgende, ved hjælp af en anonym indre klasse:
+
+\begin{verbatim}
+open.addActionListener(new ActionListener() {
+    public void actionPerformed(ActionEvent e){
+        open();
+    }
+})
+\end{verbatim}
+Her laver deklarer vi en ny indre klasse
 \end{document}
