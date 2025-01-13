@@ -1,7 +1,8 @@
 \documentclass{article}
 \usepackage[margin=1in]{geometry}
 
-\title{Abstract Classes and Interfaces}
+\title{Abstract Classes and Interfaces \\
+        kapitel 12}
 \author{Joakim Iversen}
 \date{\today}
 
@@ -13,5 +14,125 @@
 \begin{enumerate}
     \item 
 \end{enumerate}
+\newpage
+
+\section*{Noter:}
+\subsection*{Main concepts}
+\begin{itemize}
+    \item abstract Classes
+    \item Interfaces
+    \item Multiple Inheritance
+\end{itemize}
+\begin{center}
+    \textit{KODE EKSEMPEL: FOXES-AND-RABBITS SIMULATION}
+\end{center}
+\subsection*{Simulation}
+Kode eksemplet tager udgangspunkt i at simulere populationen af ræve og kaniner i et indelukket reservat og er bare et enkelt eksempel på \textit{predator-prey simulations}
+
+Klasserne Simulation, Fox og Rabbit er de spændende klasser og dem vi vil have fokus på. Fox og Rabbit giver os nogle basale handlinger for rovdyr og bytte. Det er dog ikke en biologisk præcis genskabelse af kaniner og ræve. 
+
+Simulation klassen står for at lave start stadiet af simulationen og kontrollere og kører det. Det indeholder collections af ræve og kanniner og giver hver af disse lov til at agere i et "step" af deres livscyklus. på den måde repræsentere "steps" en mængde tid. 
+
+\subsection*{Abstract Classes}
+Vi ser at klasserne, som de er givet i starten, for kanniner og ræve vil have mulighed for at blive samlet under en superklasse kaldet \textit{Animal}, i det der er meget kode duplikation på tværs af disse to klasser - og det vil gøre noget af vores kode i simulation klassen nemmere. 
+
+Vi starter med at samle fælles elementer fra \textbf{Fox} og \textbf{Rabbit} klassen til en superklasse. Dette er, feltvariabler og metoder. 
+
+Efter at have gjort dette kan vi nu pynte vores simulation klasse yderliggere. I stedet for at ittere over to forskellige lister kan vi samle det hele til en fælles collections af animals, og så itterere over den
+
+\begin{verbatim}
+for(Iterator<Animal> it = animal.iterator(); it.hasNext(); ) {
+    Animal animal = it.next();
+    if(animal instanceof Rabbit) {
+        Rabbit rabit = (Rabbit) animal;
+        rabbit.run(newAnimals);
+    }
+    else if(animal instanceof Fox) {
+        Fox fox = (Fox) animal;
+        fox.hunt(newAnimals);
+    }
+    else {
+        System.out.println("found unkown animal");
+    }
+
+    // Remove dead animals from the simulation.
+    if(! animal.isAlive()) {
+        it.remove();
+    }
+}
+\end{verbatim}
+
+vi kan se vi stadig skal sortere efter hvlket dyr vi har fat i. Men vi har samlet det hele, gennemløbning af ræve og kanniner, til en fælles gennemløbning. En måde at undgå dette er at lave en metode i superklassen og lade subklasserne overskive denne metode. På den måde behøver vi ikke at skulle tage forbehold for de to forskellige dyr.
+
+\begin{verbatim}
+// Let all animals act.
+for(Iterator<Animal> it = animals.iterator(); it.hasNext(); ) {
+    Animal animal = it.next();
+    animal.act(newAnimals);
+    // Remove dead animals from the simulation.
+    if(! animal.isAlive()) {
+        it.remove();
+    }
+}    
+\end{verbatim}
+
+Vi kan lave denne \textit{act} metode abstract hvilket er kendetegnet ved to detaljer:
+\begin{itemize}
+    \item Prefixed med keyword \textbf{abstract} 
+    \item Det har ikke en metode krop, men dens \textit{header} er afsluttet med et semikolon.
+\end{itemize}
+\begin{verbatim}
+abstract public void act(List<Animal> newAnimals);
+\end{verbatim}
+
+En klasse vil også kunne være abstrakt. En klasse der ikke er abstrakt - Alle klasser der ikke er definiere som abstrakt vil automatisk ikke være det - er det vi kalder \textit{Concrete classes}. 
+
+Der er tre fordele ved at lave en klasse abstrakt:
+\begin{itemize}
+    \item Man kan ikke lave et objekt af en abstrakt klasse
+    \begin{itemize}
+        \item At bruge det reserverede ord \textbf{new} til at skabe en abstrakt klasse vil give en fejl
+        \item Dette sikre man aldrig vil kunne skabe et objekt af en abstrakt klasse, men det kune fungere som en superklasse til dets subklasser. 
+    \end{itemize}
+    \item Kun abstrakte klasser kan have abstrakte metoder.
+    \begin{itemize}
+        \item Dette sikre at en konkret klasse ikke vil have metoder, som ikke kan udføres.
+    \end{itemize}
+    \item En abstrakt klasse med abstrakte medtoder tvinger subklassen til at overskrive disse metoder.
+    \begin{itemize}
+        \item Så for at en sub klasse skal blive en konkret klasse, skal den overskrive alle metoderne af den abstrakte superklasse. Da den ellers selv ville være en abstrakt klasse, og man vil ikke kunne lave et objekt af den type.
+    \end{itemize}
+\end{itemize}
+
+\subsection*{Interfaces}
+Der er nogle ting man skal huske når man bruger et interface:
+\begin{itemize}
+    \item \textbf{Interface} keyword istedet for klasse i headeren
+    \item Interface har ikke nogle konstruktør
+    \item Interface har ikke nogle instans variabler
+    \item Kun static og final class fields med public synlighed må være inde i et interface.
+\end{itemize}
+
+Hoved forskellen på et interface og en abstrakt klasse, er at et interface ikke har defineret nogle af sine metoder, derudover ikke have feltvariabler. 
+
+Når vi vil lave et interface bruger vi følgende header:
+\begin{verbatim}
+public interface Actor
+{
+    body
+}
+\end{verbatim}
+
+Her kan vi se at vi har byttet \textit{class} ud med \textit{interface}. Derudover har det et andet reserveret ord til når en klasse skal implementere et interface
+
+\begin{verbatim}
+public class Fox extends Animal implements Actor
+{
+    Body
+}
+\end{verbatim}
+
+Her er \textbf{Fox} en subklasse af Animal og implementere Actor interfacet. 
+
 
 \end{document}
